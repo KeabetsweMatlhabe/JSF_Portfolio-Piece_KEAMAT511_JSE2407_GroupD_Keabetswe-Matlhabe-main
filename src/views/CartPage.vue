@@ -17,7 +17,7 @@
       </ul>
       <div class="cart-summary">
         <p>Total Items: {{ totalItems }}</p>
-        <p>Total Cost: ${{ totalCost.toFixed(2) }}</p>
+        <p>Total Cost: ${{ totalCost }}</p>
         <button @click="clearCart" class="clear-cart-btn">Clear Cart</button>
       </div>
     </div>
@@ -28,64 +28,20 @@
 </template>
 
 <script>
-import {jwtDecode} from "jwt-decode";
+import { useCartStore } from '@/composables/useCartStore';
 
 export default {
-  name: "CartPage",
-  data() {
+  setup() {
+    const { cartItems, removeFromCart, updateCart, clearCart, totalItems, totalCost } = useCartStore();
+
     return {
-      cartItems: [],
+      cartItems,
+      removeFromCart,
+      updateCart,
+      clearCart,
+      totalItems,
+      totalCost,
     };
-  },
-  computed: {
-    totalItems() {
-      return this.cartItems.reduce((total, item) => total + item.quantity, 0);
-    },
-    totalCost() {
-      return this.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-    },
-  },
-  methods: {
-    loadCart() {
-      const savedCart = localStorage.getItem(`cart_${this.userId}`);
-      this.cartItems = savedCart ? JSON.parse(savedCart) : [];
-    },
-    saveCart() {
-      localStorage.setItem(`cart_${this.userId}`, JSON.stringify(this.cartItems));
-    },
-    updateCart(productId, quantity) {
-      const item = this.cartItems.find((item) => item.id === productId);
-      if (item) {
-        item.quantity = quantity;
-        this.saveCart();
-      }
-    },
-    removeFromCart(productId) {
-      this.cartItems = this.cartItems.filter((item) => item.id !== productId);
-      this.saveCart();
-    },
-    clearCart() {
-      this.cartItems = [];
-      this.saveCart();
-    },
-  },
-  created() {
-    const token = localStorage.getItem("jwt");
-    if (token) {
-      const decoded = jwtDecode(token);
-      this.userId = decoded.userId; 
-      this.loadCart();
-    } else {
-      this.$router.push("/login");
-    }
-  },
-  watch: {
-    cartItems: {
-      handler() {
-        this.saveCart();
-      },
-      deep: true,
-    },
   },
 };
 </script>
@@ -95,12 +51,18 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
 
 .cart-item {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 
 .item-details {
@@ -111,7 +73,11 @@ export default {
 .item-image {
   width: 50px;
   height: 50px;
-  margin-right: 10px;
+  margin-right: 15px;
+}
+
+.item-name {
+  font-weight: bold;
 }
 
 .item-actions {
@@ -125,12 +91,16 @@ export default {
 }
 
 .clear-cart-btn {
-  background-color: #ff0000;
-  color: #fff;
-  padding: 10px;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 10px 15px;
   border: none;
-  cursor: pointer;
   border-radius: 5px;
+  cursor: pointer;
+}
+
+.clear-cart-btn:hover {
+  background-color: #ff1a1a;
 }
 
 .item-price {

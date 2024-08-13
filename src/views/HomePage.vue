@@ -80,7 +80,7 @@ export default {
 </script>
 
 <style>
-/* Add styles for the login form */
+
 .login-container {
   max-width: 400px;
   margin: 0 auto;

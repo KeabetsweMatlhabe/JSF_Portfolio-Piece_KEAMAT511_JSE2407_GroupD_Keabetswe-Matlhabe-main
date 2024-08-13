@@ -1,43 +1,32 @@
 <template>
-  <div>
-    <ProductDetail :product="product" v-if="product" />
-    <div v-else>Loading...</div>
-    <button @click="goBack" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-      Back to Products
-    </button>
+  <div class="product-detail">
+    <img :src="product.image" alt="Product Image" />
+    <h1>{{ product.title }}</h1>
+    <p>{{ product.description }}</p>
+    <div>
+      <span>${{ product.price }}</span>
+      <button @click="addToCart(product)">Add to Cart</button>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
-import ProductDetail from '@/components/ProductDetail.vue';
+import { useCartStore } from '@/composables/useCartStore';
 
 export default {
-  components: { ProductDetail },
-  setup() {
-    const product = ref(null);
-    const route = useRoute();
-    const router = useRouter();
-    const productId = route.params.id;
+  props: {
+    product: Object,
+  },
+  setup(props) {
+    const { addToCart } = useCartStore();
 
-    const fetchProduct = async () => {
-      try {
-        const response = await axios.get(`https://fakestoreapi.com/products/${productId}`);
-        product.value = response.data;
-      } catch (error) {
-        console.error("Failed to fetch product details:", error);
-      }
+    return {
+      addToCart,
     };
-
-    const goBack = () => {
-      router.push('/');
-    };
-
-    onMounted(fetchProduct);
-
-    return { product, goBack };
   },
 };
 </script>
+
+<style scoped>
+/* Add styles here */
+</style>
