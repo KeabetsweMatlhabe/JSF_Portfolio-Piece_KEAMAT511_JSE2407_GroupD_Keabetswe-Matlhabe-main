@@ -1,61 +1,82 @@
-import { ref, computed } from 'vue';
+// useCartStore.js
+import { reactive, computed } from 'vue';
 import { jwtDecode } from 'jwt-decode';
 
 export function useCartStore() {
-  const cartItems = ref([]);
-  const userId = ref(null);
-
-  const loadCart = () => {
-    const token = localStorage.getItem('jwt');
-    if (token) {
-      const decoded = jwtDecode(token);
-      userId.value = decoded.userId;
-      const savedCart = localStorage.getItem(`cart_${userId.value}`);
-      cartItems.value = savedCart ? JSON.parse(savedCart) : [];
-    }
-  };
-
-  const saveCart = () => {
-    if (userId.value) {
-      localStorage.setItem(`cart_${userId.value}`, JSON.stringify(cartItems.value));
-    }
-  };
+  const state = reactive({
+    cartItems: JSON.parse(localStorage.getItem('cart')) || [],
+  });
 
   const addToCart = (product) => {
-    const item = cartItems.value.find((item) => item.id === product.id);
-    if (item) {
-      item.quantity += 1;
-    } else {
-      cartItems.value.push({ ...product, quantity: 1 });
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) {
+      alert('Please log in to add items to the cart');
+      return;
     }
-    saveCart();
+    const userId = jwtDecode(jwt).userId;
+
+    const existingProduct = state.cartItems.find(
+      (item) => item.id === product.id && item.userId === userId
+    );
+
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      state.cartItems.push({ ...product, quantity: 1, userId });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(state.cartItems));
   };
 
   const removeFromCart = (productId) => {
-    cartItems.value = cartItems.value.filter((item) => item.id !== productId);
-    saveCart();
+    const jwt = localStorage.getItem('jwt');
+    const userId = jwtDecode(jwt).userId;
+
+    state.cartItems = state.cartItems.filter(
+      (item) => item.id !== productId || item.userId !== userId
+    );
+
+    localStorage.setItem('cart', JSON.stringify(state.cartItems));
+  };
+
+  const updateCart = (productId, quantity) => {
+    const jwt = localStorage.getItem('jwt');
+    const userId = jwtDecode(jwt).userId;
+
+    const product = state.cartItems.find(
+      (item) => item.id === productId && item.userId === userId
+    );
+    if (product) {
+      product.quantity = quantity;
+      localStorage.setItem('cart', JSON.stringify(state.cartItems));
+    }
   };
 
   const clearCart = () => {
-    cartItems.value = [];
-    saveCart();
+    const jwt = localStorage.getItem('jwt');
+    const userId = jwtDecode(jwt).userId;
+
+    state.cartItems = state.cartItems.filter(item => item.userId !== userId);
+    localStorage.setItem('cart', JSON.stringify(state.cartItems));
   };
 
-  const totalItems = computed(() => {
-    return cartItems.value.reduce((total, item) => total + item.quantity, 0);
-  });
+  const cartCount = computed(() =>
+    state.cartItems.reduce((sum, item) => sum + item.quantity, 0)
+  );
 
-  const totalCost = computed(() => {
-    return cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
-  });
+  const totalItems = computed(() => state.cartItems.length);
+  const totalCost = computed(() =>
+    state.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
+  );
 
   return {
-    cartItems,
     addToCart,
     removeFromCart,
+    updateCart,
     clearCart,
+    cartItems: state.cartItems,
+    cartCount,
     totalItems,
     totalCost,
-    loadCart,
   };
 }

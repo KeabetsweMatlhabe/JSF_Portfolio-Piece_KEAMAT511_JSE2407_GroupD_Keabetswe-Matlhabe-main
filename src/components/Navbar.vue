@@ -1,3 +1,4 @@
+<!-- Navbar.vue -->
 <template>
   <nav class="navbar">
     <div class="nav-container">
@@ -27,6 +28,7 @@ export default {
 
     const logout = () => {
       localStorage.removeItem('jwt');
+      localStorage.removeItem('cart');
       window.location.reload();
     };
 
@@ -89,4 +91,5 @@ button:hover {
   text-decoration: underline;
 }
 </style>
+
 
