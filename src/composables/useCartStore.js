@@ -7,13 +7,18 @@ export function useCartStore() {
     cartItems: JSON.parse(localStorage.getItem('cart')) || [],
   });
 
-  const addToCart = (product) => {
+  const getCurrentUserId = () => {
     const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
+    if (!jwt) return null;
+    return jwtDecode(jwt).userId;
+  };
+
+  const addToCart = (product) => {
+    const userId = getCurrentUserId();
+    if (!userId) {
       alert('Please log in to add items to the cart');
       return;
     }
-    const userId = jwtDecode(jwt).userId;
 
     const existingProduct = state.cartItems.find(
       (item) => item.id === product.id && item.userId === userId
@@ -25,58 +30,77 @@ export function useCartStore() {
       state.cartItems.push({ ...product, quantity: 1, userId });
     }
 
-    localStorage.setItem('cart', JSON.stringify(state.cartItems));
+    updateLocalStorage();
   };
 
   const removeFromCart = (productId) => {
-    const jwt = localStorage.getItem('jwt');
-    const userId = jwtDecode(jwt).userId;
+    const userId = getCurrentUserId();
+    if (!userId) return;
 
     state.cartItems = state.cartItems.filter(
       (item) => item.id !== productId || item.userId !== userId
     );
 
-    localStorage.setItem('cart', JSON.stringify(state.cartItems));
+    updateLocalStorage();
   };
 
   const updateCart = (productId, quantity) => {
-    const jwt = localStorage.getItem('jwt');
-    const userId = jwtDecode(jwt).userId;
+    const userId = getCurrentUserId();
+    if (!userId) return;
 
     const product = state.cartItems.find(
       (item) => item.id === productId && item.userId === userId
     );
     if (product) {
       product.quantity = quantity;
-      localStorage.setItem('cart', JSON.stringify(state.cartItems));
+      updateLocalStorage();
     }
   };
 
   const clearCart = () => {
-    const jwt = localStorage.getItem('jwt');
-    const userId = jwtDecode(jwt).userId;
+    const userId = getCurrentUserId();
+    if (!userId) return;
 
     state.cartItems = state.cartItems.filter(item => item.userId !== userId);
+    updateLocalStorage();
+  };
+
+  const updateLocalStorage = () => {
     localStorage.setItem('cart', JSON.stringify(state.cartItems));
   };
 
-  const cartCount = computed(() =>
-    state.cartItems.reduce((sum, item) => sum + item.quantity, 0)
+  const cartItems = computed(() => {
+    const userId = getCurrentUserId();
+    return userId ? state.cartItems.filter(item => item.userId === userId) : [];
+  });
+
+  const cartCount = computed(() => 
+    cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
   );
 
-  const totalItems = computed(() => state.cartItems.length);
-  const totalCost = computed(() =>
-    state.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
+  const totalItems = computed(() => cartItems.value.length);
+
+  const totalCost = computed(() => 
+    cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
   );
+
+  const clearCartCount = () => {
+    const userId = getCurrentUserId();
+    if (!userId) return;
+
+    state.cartItems = state.cartItems.filter(item => item.userId !== userId);
+    updateLocalStorage();
+  };
 
   return {
     addToCart,
     removeFromCart,
     updateCart,
     clearCart,
-    cartItems: state.cartItems,
+    cartItems,
     cartCount,
     totalItems,
     totalCost,
+    clearCartCount,
   };
 }

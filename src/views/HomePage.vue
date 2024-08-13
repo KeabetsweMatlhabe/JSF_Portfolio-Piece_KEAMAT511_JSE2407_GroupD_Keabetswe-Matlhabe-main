@@ -3,7 +3,10 @@
     <nav class="navbar">
       <router-link to="/">Home</router-link>
       <router-link to="/wishList">Wish List</router-link>
-      <router-link to="/cart">Cart</router-link>
+      <router-link to="/cart" class="cart-link">
+        Cart
+        <CartCounter />
+      </router-link>
       <button @click="logout" v-if="loggedIn">Logout</button>
       <router-link to="/login" v-else>Login</router-link>
     </nav>
@@ -23,21 +26,27 @@
 
 <script>
 import { onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import { useProductStore } from '@/composables/useProducts';
+import { useCartStore } from '@/composables/useCartStore';
 import FilterComponent from '@/components/FilterComponent.vue';
 import SortComponent from '@/components/SortComponent.vue';
 import ProductList from '@/components/ProductList.vue';
 import ErrorComponent from '@/components/ErrorComponent.vue';
+import CartCounter from '@/components/CartCounter.vue';
 
 export default {
   components: {
     FilterComponent,
     SortComponent,
     ProductList,
-    ErrorComponent
+    ErrorComponent,
+    CartCounter
   },
   setup() {
+    const router = useRouter();
     const { products, loading, error, fetchProducts, filteredProducts, setFilterItem, setSearchTerm, setSorting } = useProductStore();
+    const { cartCount, clearCartCount } = useCartStore();
 
     onMounted(async () => {
       await fetchProducts();
@@ -61,7 +70,8 @@ export default {
 
     const logout = () => {
       localStorage.removeItem('jwt');
-      this.$router.push('/login');
+      clearCartCount();
+      router.push('/login');
     };
 
     return {
@@ -73,87 +83,14 @@ export default {
       handleFilter,
       handleSearch,
       loggedIn,
-      logout
+      logout,
+      cartCount
     };
   },
 };
 </script>
 
-<style>
-
-.login-container {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.password-input {
-  display: flex;
-  align-items: center;
-}
-
-.password-input input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px 0 0 5px;
-}
-
-.password-input button {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-left: none;
-  border-radius: 0 5px 5px 0;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-}
-
-.password-input button:hover {
-  background-color: #0056b3;
-}
-
-button[type="submit"] {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-}
-
-button[type="submit"]:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-button[type="submit"]:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-
-.loading-message, .error-message {
-  margin-top: 20px;
-  font-size: 14px;
-}
-
-.error-message {
-  color: red;
-}
-
-.loading-message {
-  color: green;
-}
-
-/* Navbar styling */
+<style scoped>
 .navbar {
   display: flex;
   justify-content: space-around;
@@ -183,5 +120,9 @@ button[type="submit"]:hover:not(:disabled) {
 
 .navbar button:hover {
   text-decoration: underline;
+}
+
+.cart-link {
+  position: relative;
 }
 </style>

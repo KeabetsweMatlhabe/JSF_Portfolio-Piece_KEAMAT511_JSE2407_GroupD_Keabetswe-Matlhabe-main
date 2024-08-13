@@ -7,11 +7,11 @@ import ProductDetailPage from '../views/ProductDetailPage.vue';
 import WishList from '../views/WishList.vue';
 
 const routes = [
-  { path: '/', component: HomePage, meta: { requiresAuth: true } },
-  { path: '/login', component: LoginPage },
-  { path: '/cart', component: CartPage, meta: { requiresAuth: true } },
-  { path: '/products/:id', component: ProductDetailPage, meta: { requiresAuth: true } },
-  { path: '/wishList', component: WishList, meta: { requiresAuth: true } },
+  { path: '/', component: HomePage, meta: { requiresAuth: true }, name: 'Home' },
+  { path: '/login', component: LoginPage, name: 'Login' },
+  { path: '/cart', component: CartPage, meta: { requiresAuth: true }, name: 'Cart' },
+  { path: '/products/:id', component: ProductDetailPage, meta: { requiresAuth: true }, name: 'ProductDetail' },
+  { path: '/wishList', component: WishList, meta: { requiresAuth: true }, name: 'WishList' },
 ];
 
 const router = createRouter({
@@ -22,7 +22,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('jwt');
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login');
+    next({ name: 'Login' });
   } else {
     next();
   }
