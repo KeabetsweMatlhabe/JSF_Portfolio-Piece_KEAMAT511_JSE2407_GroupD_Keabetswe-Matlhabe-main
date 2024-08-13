@@ -47,6 +47,7 @@ export default {
 </script>
 
 <style scoped>
+/* Styling for the cart */
 .cart-container {
   max-width: 800px;
   margin: 0 auto;
