@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="bg-gray-500 border-gray-200">
-      <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <!-- <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <router-link to="/">
           <button class="flex items-center space-x-3 rtl:space-x-reverse">
             <img src="../assets/online-shop.png" class="h-8" alt="SwiftCart Logo" />
@@ -43,7 +43,7 @@
             </li>
           </ul>
         </div>
-      </div>
+      </div> -->
     </nav>
     <div class="login-container">
       <h1>Login</h1>
