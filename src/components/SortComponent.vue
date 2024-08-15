@@ -18,6 +18,8 @@
 import { ref, watch } from 'vue';
 
 export default {
+  name: 'SortComponent',
+  emits: ['sort'], // Declare custom events
   props: {
     initialSort: {
       type: String,
