@@ -15,11 +15,12 @@
       <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">{{ product.category }}</span>
       <h3 class="text-xl md:text-2xl lg:text-2xl font-bold">${{ product.price }}</h3>
       <button 
-        class="bg-cyan-700 hover:bg-cyan-900 w-[90%] md:w-[14rem] lg:w-[14rem] text-white font-bold py-2 px-4 rounded"
-        @click="addToCart"
-      >
-        Add To Cart
-      </button>
+      class="bg-cyan-700 hover:bg-cyan-900 w-[90%] md:w-[14rem] lg:w-[14rem] text-white font-bold py-2 px-4 rounded"
+      @click="handleAddToCart"
+      :disabled="!isLoggedIn"
+    >
+      {{ isLoggedIn ? 'Add To Cart' : 'Login to Add to Cart' }}
+    </button>
       <h2 class="text-lg font-bold">Description</h2>
       <p>{{ product.description }}</p>
     </div>
@@ -28,20 +29,32 @@
 
 <script>
 import { useCartStore } from '@/composables/useCartStore';
+import { ref, onMounted } from 'vue';
 
 export default {
   props: {
     product: Object,
   },
   setup(props) {
-    const { addToCart } = useCartStore();
+    const { addToCart, isLoggedIn } = useCartStore();
+    const loginStatus = ref(false);
 
-    const addToCartHandler = () => {
-      addToCart(props.product);
+    const handleAddToCart = () => {
+      if (isLoggedIn.value) {
+        addToCart(props.product);
+      } else {
+        // Redirect to login page or show login modal
+        alert('Please log in to add items to the cart');
+      }
     };
 
+    onMounted(() => {
+      loginStatus.value = isLoggedIn.value;
+    });
+
     return {
-      addToCart: addToCartHandler,
+      handleAddToCart,
+      isLoggedIn: loginStatus,
     };
   },
 };

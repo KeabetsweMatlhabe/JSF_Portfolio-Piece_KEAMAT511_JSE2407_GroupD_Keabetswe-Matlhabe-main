@@ -7,11 +7,39 @@ import ProductDetailPage from '../views/ProductDetailPage.vue';
 import WishList from '../views/WishList.vue';
 
 const routes = [
-  { path: '/', component: HomePage, meta: { requiresAuth: true }, name: 'Home' },
-  { path: '/login', component: LoginPage, name: 'Login' },
-  { path: '/cart', component: CartPage, meta: { requiresAuth: true }, name: 'Cart' },
-  { path: '/products/:id', component: ProductDetailPage, meta: { requiresAuth: true }, name: 'ProductDetail' },
-  { path: '/wishList', component: WishList, meta: { requiresAuth: true }, name: 'WishList' },
+  { 
+    path: '/', 
+    component: HomePage, 
+    meta: { requiresAuth: true }, 
+    name: 'Home',
+    props: true // This allows passing props to the component
+  },
+  { 
+    path: '/login', 
+    component: LoginPage, 
+    name: 'Login' 
+  },
+  { 
+    path: '/cart', 
+    component: CartPage, 
+    meta: { requiresAuth: true }, 
+    name: 'Cart',
+    props: true
+  },
+  { 
+    path: '/products/:id', 
+    component: ProductDetailPage, 
+    meta: { requiresAuth: true }, 
+    name: 'ProductDetail',
+    props: true
+  },
+  { 
+    path: '/wishList', 
+    component: WishList, 
+    meta: { requiresAuth: true }, 
+    name: 'WishList',
+    props: true
+  },
 ];
 
 const router = createRouter({

@@ -1,24 +1,12 @@
 <template>
   <div>
-    <!-- <nav class="navbar">
+    <nav class="navbar">
       <router-link to="/">Home</router-link>
       <router-link to="/wishList">Wish List</router-link>
       <router-link to="/cart">Cart</router-link>
       <button @click="logout" v-if="loggedIn">Logout</button>
       <router-link to="/login" v-else>Login</router-link>
-      <button
-          @click="toggleNavbar"
-          type="button"
-          class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-          aria-controls="navbar-default"
-          aria-expanded="false"
-        >
-          <span class="sr-only">Open main menu</span>
-          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"></path>
-          </svg>
-        </button>
-    </nav> -->
+    </nav>
     <div class="grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto justify-center">
       <FilterComponent @filter="handleFilter" @search="handleSearch" />
       <SortComponent @sort="handleSort" />
@@ -92,7 +80,7 @@ export default {
 </script>
 
 <style>
-
+/* Add styles for the login form */
 .login-container {
   max-width: 400px;
   margin: 0 auto;

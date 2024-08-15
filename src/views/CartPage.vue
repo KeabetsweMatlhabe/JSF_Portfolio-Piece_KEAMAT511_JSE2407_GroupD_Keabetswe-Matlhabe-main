@@ -1,56 +1,66 @@
-<!-- CartPage.vue -->
 <template>
   <div class="cart-container">
     <h1>Your Shopping Cart</h1>
-    <div v-if="cartItems.length > 0">
-      <ul>
-        <li v-for="item in cartItems" :key="item.id" class="cart-item">
-          <div class="item-details">
-            <img :src="item.image" alt="Product Image" class="item-image" />
-            <div class="item-info">
-              <span class="item-name">{{ item.title }}</span>
-              <span class="item-price">${{ item.price.toFixed(2) }}</span>
+    <div v-if="isLoggedIn">
+      <div v-if="cartItems.length > 0">
+        <ul>
+          <li v-for="item in cartItems" :key="item.id" class="cart-item">
+            <div class="item-details">
+              <img :src="item.image" alt="Product Image" class="item-image" />
+              <div class="item-info">
+                <span class="item-name">{{ item.title }}</span>
+                <span class="item-price">${{ item.price.toFixed(2) }}</span>
+              </div>
             </div>
-          </div>
-          <div class="item-actions">
-            <input 
-              type="number" 
-              v-model.number="item.quantity" 
-              @change="updateCart(item.id, item.quantity)" 
-              min="1" 
-              class="quantity-input"
-            />
-            <button @click="removeFromCart(item.id)" class="remove-btn">Remove</button>
-          </div>
-          <div class="item-total">${{ (item.price * item.quantity).toFixed(2) }}</div>
-        </li>
-      </ul>
-      <div class="cart-summary">
-        <p><strong>Total Items:</strong> {{ totalItems }}</p>
-        <p><strong>Total Cost:</strong> ${{ totalCost }}</p>
-        <button @click="clearCart" class="clear-cart-btn">Clear Cart</button>
+            <div class="item-actions">
+              <input
+                type="number"
+                v-model.number="item.quantity"
+                @change="updateCart(item.id, item.quantity)"
+                min="1"
+                class="quantity-input"
+              />
+              <button @click="removeFromCart(item.id)" class="remove-btn">Remove</button>
+            </div>
+            <div class="item-total">${{ (item.price * item.quantity).toFixed(2) }}</div>
+          </li>
+        </ul>
+        <div class="cart-summary">
+          <p><strong>Total Items:</strong> {{ totalItems }}</p>
+          <p><strong>Total Cost:</strong> ${{ totalCost.toFixed(2) }}</p>
+          <button @click="clearCart" class="clear-cart-btn">Clear Cart</button>
+        </div>
+      </div>
+      <div v-else class="empty-cart">
+        <p>Your cart is empty.</p>
       </div>
     </div>
-    <div v-else class="empty-cart">
-      <p>Your cart is empty.</p>
+    <div v-else class="not-logged-in">
+      <p>Please log in to view your cart.</p>
+      <router-link to="/login" class="login-btn">Log In</router-link>
     </div>
   </div>
 </template>
 
 <script>
-import { useCartStore } from '@/composables/useCartStore';
+import { useCartStore } from '../composables/useCartStore';
+import { onMounted, computed } from 'vue';
 
 export default {
   setup() {
-    const { 
-      cartItems, 
-      removeFromCart, 
-      updateCart, 
-      clearCart, 
-      totalItems, 
+    const {
+      cartItems,
+      removeFromCart,
+      updateCart,
+      clearCart,
+      totalItems,
       totalCost,
-      cartCount 
+      isLoggedIn,
     } = useCartStore();
+
+    onMounted(() => {
+      // Cart items are loaded from localStorage in the store
+    });
 
     return {
       cartItems,
@@ -59,7 +69,7 @@ export default {
       clearCart,
       totalItems,
       totalCost,
-      cartCount
+      isLoggedIn,
     };
   },
 };
@@ -179,10 +189,25 @@ h1 {
   background-color: #e0a800;
 }
 
-.empty-cart {
+.empty-cart, .not-logged-in {
   text-align: center;
   font-size: 18px;
   color: #6c757d;
   margin-top: 50px;
+}
+
+.login-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.login-btn:hover {
+  background-color: #0056b3;
 }
 </style>

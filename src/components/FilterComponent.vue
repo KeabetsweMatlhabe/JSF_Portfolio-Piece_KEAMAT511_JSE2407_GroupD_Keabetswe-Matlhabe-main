@@ -49,7 +49,7 @@
           type="search"
           id="search-dropdown"
           v-model="searchTerm"
-          @input="$emit('search', searchTerm)"
+          @input="handleSearch"
           class="p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Search products..."
         />
@@ -77,18 +77,17 @@
       </div>
     </div>
   </form>
-  <ErrorComponent v-if="error" :error="error" />
+  <Error v-if="error" :error="error" />
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
 import { useProductStore } from '../composables/useProducts';
-import ErrorComponent from '../components/ErrorComponent.vue';
+import Error from '../components/ErrorComponent.vue';
 
 export default {
-  components: { ErrorComponent },
-  emits: ['filter', 'search'],
-  setup(props, { emit }) {
+  components: { Error },
+  setup() {
     const { categories, error, filterItem, setFilterItem, searchTerm, setSearchTerm, fetchProducts } = useProductStore();
     const isDropdownVisible = ref(false);
 
@@ -106,11 +105,14 @@ export default {
 
     const handleFilter = (category) => {
       setFilterItem(category);
-      emit('filter', category);
       isDropdownVisible.value = false;
     };
 
-    return { categories, error, filterItem, searchTerm, isDropdownVisible, toggleDropdown, handleFilter };
+    const handleSearch = () => {
+      setSearchTerm(searchTerm.value);
+    };
+
+    return { categories, error, filterItem, searchTerm, isDropdownVisible, toggleDropdown, handleFilter, handleSearch };
   }
 };
 </script>
