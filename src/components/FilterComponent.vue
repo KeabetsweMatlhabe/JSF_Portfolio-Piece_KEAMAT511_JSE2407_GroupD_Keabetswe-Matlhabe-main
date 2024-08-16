@@ -86,6 +86,8 @@ import { useProductStore } from '../composables/useProducts';
 import Error from '../components/ErrorComponent.vue';
 
 export default {
+  name: 'FilterComponent',
+  emits: ['filter', 'search'], // Declare custom events
   components: { Error },
   setup() {
     const { categories, error, filterItem, setFilterItem, searchTerm, setSearchTerm, fetchProducts } = useProductStore();
@@ -105,14 +107,16 @@ export default {
 
     const handleFilter = (category) => {
       setFilterItem(category);
+      emit('filter', category); // Emit the filter event
       isDropdownVisible.value = false;
     };
 
     const handleSearch = () => {
-      setSearchTerm(searchTerm.value);
+      emit('search', searchTerm.value); // Emit the search event
     };
 
     return { categories, error, filterItem, searchTerm, isDropdownVisible, toggleDropdown, handleFilter, handleSearch };
   }
 };
 </script>
+

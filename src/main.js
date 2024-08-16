@@ -1,8 +1,13 @@
 import './assets/main.css'
 
-import { createApp } from 'vue' // import the root component App from a single-file component.
+
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router';
 
-createApp(App).use(router).mount('#app') // The object we are passing into 'createApp' is in fact a component. 
-
+const app = createApp(App)
+const pinia = createPinia()
+app.use(pinia)
+app.use(router)
+app.mount('#app')

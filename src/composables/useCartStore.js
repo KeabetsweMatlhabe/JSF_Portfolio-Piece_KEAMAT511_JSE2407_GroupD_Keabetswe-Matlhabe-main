@@ -1,112 +1,102 @@
-import { reactive, computed, ref } from 'vue';
+// src/stores/cartStore.js
+import { defineStore } from 'pinia';
 import { jwtDecode } from 'jwt-decode';
 
-export function useCartStore() {
-  const state = reactive({
+export const useCartStore = defineStore('cart', {
+  state: () => ({
     allCartItems: JSON.parse(localStorage.getItem('cart')) || [],
-  });
+    isLoggedIn: !!localStorage.getItem('jwt'),
+  }),
 
-  const isLoggedIn = ref(!!localStorage.getItem('jwt'));
+  getters: {
+    cartItems: (state) => {
+      const userId = getCurrentUserId();
+      return userId ? Object.values(state.allCartItems).filter(item => item.userId === userId) : [];
+    },
+    cartCount: (state) => {
+      return state.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    },
+    totalItems: (state) => {
+      return state.cartItems.length;
+    },
+    totalCost: (state) => {
+      return Number(state.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2));
+    },
+  },
 
-  const getCurrentUserId = () => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return null;
-    try {
-      return jwtDecode(jwt).userId;
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  };
+  actions: {
+    addToCart(product) {
+      if (!this.isLoggedIn) {
+        alert('Please log in to add items to the cart');
+        return;
+      }
+      const userId = getCurrentUserId();
+      if (!userId) return;
 
-  const cartItems = computed(() => {
-    const userId = getCurrentUserId();
-    return userId ? state.allCartItems.filter(item => item.userId === userId) : [];
-  });
+      const existingProduct = this.cartItems.find(
+        (item) => item.id === product.id && item.userId === userId
+      );
+      if (existingProduct) {
+        existingProduct.quantity += 1;
+      } else {
+        this.allCartItems.push({ ...product, quantity: 1, userId });
+      }
+      
+      this.updateLocalStorage();
+    },
 
-  const addToCart = (product) => {
-    if (!isLoggedIn.value) {
-      alert('Please log in to add items to the cart');
-      return;
-    }
-    const userId = getCurrentUserId();
-    if (!userId) return;
+    removeFromCart(productId) {
+      const userId = getCurrentUserId();
+      if (!userId) return;
+      this.allCartItems = this.allCartItems.filter(
+        (item) => !(item.id === productId && item.userId === userId)
+      );
+      this.updateLocalStorage();
+    },
 
-    const existingProduct = state.allCartItems.find(
-      (item) => item.id === product.id && item.userId === userId
-    );
-    if (existingProduct) {
-      existingProduct.quantity += 1;
-    } else {
-      state.allCartItems.push({ ...product, quantity: 1, userId });
-    }
-    updateLocalStorage();
-  };
+    updateCart(productId, quantity) {
+      const userId = getCurrentUserId();
+      if (!userId) return;
+      const product = this.cartItems.find(
+        (item) => item.id === productId && item.userId === userId
+      );
+      if (product) {
+        product.quantity = parseInt(quantity);
+        this.updateLocalStorage();
+      }
+    },
 
-  const removeFromCart = (productId) => {
-    const userId = getCurrentUserId();
-    if (!userId) return;
-    state.allCartItems = state.allCartItems.filter(
-      (item) => !(item.id === productId && item.userId === userId)
-    );
-    updateLocalStorage();
-  };
+    clearCart() {
+      const userId = getCurrentUserId();
+      if (!userId) return;
+      this.allCartItems = this.allCartItems.filter(item => item.userId !== userId);
+      this.updateLocalStorage();
+    },
 
-  const updateCart = (productId, quantity) => {
-    const userId = getCurrentUserId();
-    if (!userId) return;
-    const product = state.allCartItems.find(
-      (item) => item.id === productId && item.userId === userId
-    );
-    if (product) {
-      product.quantity = parseInt(quantity);
-      updateLocalStorage();
-    }
-  };
+    updateLocalStorage() {
+      localStorage.setItem('cart', JSON.stringify(this.allCartItems));
+    },
 
-  const clearCart = () => {
-    const userId = getCurrentUserId();
-    if (!userId) return;
-    state.allCartItems = state.allCartItems.filter(item => item.userId !== userId);
-    updateLocalStorage();
-  };
+    login(jwt) {
+      localStorage.setItem('jwt', jwt);
+      this.isLoggedIn = true;
+    },
 
-  const updateLocalStorage = () => {
-    localStorage.setItem('cart', JSON.stringify(state.allCartItems));
-  };
+    logout() {
+      localStorage.removeItem('jwt');
+      this.isLoggedIn = false;
+      this.clearCart();
+    },
+  },
+});
 
-  const cartCount = computed(() => 
-    cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
-  );
-
-  const totalItems = computed(() => cartItems.value.length);
-
-  const totalCost = computed(() => 
-    Number(cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2))
-  );
-
-  const login = (jwt) => {
-    localStorage.setItem('jwt', jwt);
-    isLoggedIn.value = true;
-  };
-
-  const logout = () => {
-    localStorage.removeItem('jwt');
-    isLoggedIn.value = false;
-    clearCart();
-  };
-
-  return {
-    addToCart,
-    removeFromCart,
-    updateCart,
-    clearCart,
-    cartItems,
-    cartCount,
-    totalItems,
-    totalCost,
-    login,
-    logout,
-    isLoggedIn,
-  };
+function getCurrentUserId() {
+  const jwt = localStorage.getItem('jwt');
+  if (!jwt) return null;
+  try {
+    return jwtDecode(jwt).sub;
+  } catch (error) {
+    console.error('Error decoding JWT:', error);
+    return null;
+  }
 }

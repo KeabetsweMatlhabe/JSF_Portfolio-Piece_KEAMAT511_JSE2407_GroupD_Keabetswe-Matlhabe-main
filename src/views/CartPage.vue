@@ -1,10 +1,10 @@
 <template>
   <div class="cart-container">
     <h1>Your Shopping Cart</h1>
-    <div v-if="isLoggedIn">
-      <div v-if="cartItems.length > 0">
+    <div v-if="cartStore.isLoggedIn">
+      <div v-if="cartStore.cartItems.length > 0">
         <ul>
-          <li v-for="item in cartItems" :key="item.id" class="cart-item">
+          <li v-for="item in cartStore.cartItems" :key="item.id" class="cart-item">
             <div class="item-details">
               <img :src="item.image" alt="Product Image" class="item-image" />
               <div class="item-info">
@@ -16,19 +16,19 @@
               <input
                 type="number"
                 v-model.number="item.quantity"
-                @change="updateCart(item.id, item.quantity)"
+                @change="cartStore.updateCart(item.id, item.quantity)"
                 min="1"
                 class="quantity-input"
               />
-              <button @click="removeFromCart(item.id)" class="remove-btn">Remove</button>
+              <button @click="cartStore.removeFromCart(item.id)" class="remove-btn">Remove</button>
             </div>
             <div class="item-total">${{ (item.price * item.quantity).toFixed(2) }}</div>
           </li>
         </ul>
         <div class="cart-summary">
-          <p><strong>Total Items:</strong> {{ totalItems }}</p>
-          <p><strong>Total Cost:</strong> ${{ totalCost.toFixed(2) }}</p>
-          <button @click="clearCart" class="clear-cart-btn">Clear Cart</button>
+          <p><strong>Total Items:</strong> {{ cartStore.totalItems }}</p>
+          <p><strong>Total Cost:</strong> ${{ cartStore.totalCost.toFixed(2) }}</p>
+          <button @click="cartStore.clearCart" class="clear-cart-btn">Clear Cart</button>
         </div>
       </div>
       <div v-else class="empty-cart">
@@ -43,37 +43,25 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue';
 import { useCartStore } from '../composables/useCartStore';
-import { onMounted, computed } from 'vue';
 
-export default {
+export default defineComponent({
+  name: 'CartPage',
   setup() {
-    const {
-      cartItems,
-      removeFromCart,
-      updateCart,
-      clearCart,
-      totalItems,
-      totalCost,
-      isLoggedIn,
-    } = useCartStore();
-
-    onMounted(() => {
-      // Cart items are loaded from localStorage in the store
-    });
+    const cartStore = useCartStore();
 
     return {
-      cartItems,
-      removeFromCart,
-      updateCart,
-      clearCart,
-      totalItems,
-      totalCost,
-      isLoggedIn,
+      cartStore,
     };
   },
-};
+});
 </script>
+
+<style scoped>
+/* The existing styles remain unchanged */
+</style>
+
 
 <style scoped>
 .cart-container {
