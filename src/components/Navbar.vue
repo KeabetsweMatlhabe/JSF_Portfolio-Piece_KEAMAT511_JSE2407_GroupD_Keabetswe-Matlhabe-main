@@ -22,6 +22,11 @@
         <li v-else>
           <router-link to="/login" class="text-white hover:text-blue-500">Login</router-link>
         </li>
+        <li v-if="cartStore.isLoggedIn">
+      <router-link to="/comparison" class="text-white hover:text-blue-500">
+        Compare ({{ comparisonStore.comparisonCount }})
+      </router-link>
+    </li>
       </ul>
     </div>
   </nav>
@@ -30,19 +35,24 @@
 <script>
 import { useCartStore } from '@/composables/useCartStore';
 import { useRouter } from 'vue-router';
+import { useComparisonStore } from '@/composables/useComparisonStore';
 
 export default {
   setup() {
     const cartStore = useCartStore();
+    const comparisonStore = useComparisonStore();
     const router = useRouter();
+    
 
     const handleLogout = () => {
       cartStore.logout();
+      comparisonStore.clearComparisonList();
       router.push('/login');
     };
 
     return {
       cartStore,
+      comparisonStore,
       handleLogout,
     };
   },

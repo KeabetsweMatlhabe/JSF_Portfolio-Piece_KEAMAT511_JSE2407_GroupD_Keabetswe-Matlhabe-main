@@ -1,29 +1,27 @@
-// src/composables/useComparisonStore.js
-import { ref } from 'vue';
 
-export function useComparisonStore() {
-  const comparisonList = ref([]);
+// src/stores/comparisonStore.js
+import { defineStore } from 'pinia';
 
-  const addToComparison = (product) => {
-    if (comparisonList.value.length < 5) { // Limit to 5 items
-      comparisonList.value.push(product);
-    } else {
-      alert('You can only compare up to 5 products.');
-    }
-  };
-
-  const removeFromComparison = (productId) => {
-    comparisonList.value = comparisonList.value.filter(p => p.id !== productId);
-  };
-
-  const clearComparisonList = () => {
-    comparisonList.value = [];
-  };
-
-  return {
-    comparisonList,
-    addToComparison,
-    removeFromComparison,
-    clearComparisonList,
-  };
-}
+export const useComparisonStore = defineStore('comparison', {
+  state: () => ({
+    comparisonList: [],
+  }),
+  actions: {
+    addToComparison(product) {
+      if (this.comparisonList.length < 5) {
+        this.comparisonList.push(product);
+      } else {
+        alert('You can only compare up to 5 products.');
+      }
+    },
+    removeFromComparison(productId) {
+      this.comparisonList = this.comparisonList.filter(p => p.id !== productId);
+    },
+    clearComparisonList() {
+      this.comparisonList = [];
+    },
+  },
+  getters: {
+    comparisonCount: (state) => state.comparisonList.length,
+  },
+});
