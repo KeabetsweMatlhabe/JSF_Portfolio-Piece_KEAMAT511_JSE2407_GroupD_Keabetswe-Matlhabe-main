@@ -1,4 +1,4 @@
-// src/stores/cartStore.js
+
 import { defineStore } from 'pinia';
 import { jwtDecode } from 'jwt-decode';
 

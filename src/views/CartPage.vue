@@ -59,7 +59,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* The existing styles remain unchanged */
+
 </style>
 
 
