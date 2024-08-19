@@ -1,12 +1,12 @@
 <template>
   <div>
-    <nav class="navbar">
+    <!-- <nav class="navbar">
       <router-link to="/">Home</router-link>
       <router-link to="/wishList">Wish List</router-link>
       <router-link to="/cart">Cart</router-link>
       <button @click="logout" v-if="loggedIn">Logout</button>
       <router-link to="/login" v-else>Login</router-link>
-    </nav>
+    </nav> -->
     <div class="grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto justify-center">
       <FilterComponent @filter="handleFilter" @search="handleSearch" />
       <SortComponent @sort="handleSort" />
