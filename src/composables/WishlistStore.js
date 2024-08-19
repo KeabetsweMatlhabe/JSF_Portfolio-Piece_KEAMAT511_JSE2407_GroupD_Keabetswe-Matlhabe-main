@@ -1,4 +1,4 @@
-// src/composables/useWishlistStore.js
+
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 
