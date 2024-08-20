@@ -1,5 +1,5 @@
 
-// src/stores/comparisonStore.js
+
 import { defineStore } from 'pinia';
 
 export const useComparisonStore = defineStore('comparison', {

@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../views/HomePage.vue';
 import CartPage from '../views/CartPage.vue';
@@ -6,7 +7,6 @@ import ProductDetailPage from '../views/ProductDetailPage.vue';
 import WishList from '../views/WishList.vue';
 import ComparisonPage from '../views/ComparisonPage.vue';
 
-// Define your routes
 const routes = [
   { 
     path: '/', 
@@ -19,6 +19,13 @@ const routes = [
     path: '/login', 
     component: LoginPage, 
     name: 'Login' 
+  },
+  { 
+    path: '/comparison', 
+    component: ComparisonPage, 
+    meta: { requiresAuth: true }, 
+    name: 'Comparison',
+    props: true
   },
   { 
     path: '/cart', 
@@ -41,21 +48,13 @@ const routes = [
     name: 'WishList',
     props: true
   },
-  { 
-    path: '/comparison', 
-    component: ComparisonPage, 
-    meta: { requiresAuth: true }, 
-    name: 'Comparison' 
-  }
 ];
 
-// Create the router instance
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
 
-// Global route guard
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('jwt');
   if (to.meta.requiresAuth && !isAuthenticated) {

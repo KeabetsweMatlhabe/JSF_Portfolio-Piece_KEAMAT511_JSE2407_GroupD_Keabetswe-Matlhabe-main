@@ -53,6 +53,7 @@
       <button @click.stop="compareProduct" class="inline-flex justify-center whitespace-nowrap rounded-lg bg-indigo-700 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-900 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors">
         Compare
       </button>
+      
     </div>
   </div>
 </template>
@@ -62,6 +63,8 @@ import { useRouter } from 'vue-router';
 import Ratings from '@/components/RatingsComponent.vue';
 import { useCartStore } from '@/composables/useCartStore';
 import { useComparisonStore } from '@/composables/useComparisonStore';
+import { useWishlistStore } from '@/composables/useWishlistStore';
+import { computed } from 'vue';
 
 export default {
   name: 'ProductCard',
@@ -78,6 +81,11 @@ export default {
     const router = useRouter();
     const cartStore = useCartStore();
     const { addToComparison } = useComparisonStore();
+    const wishlistStore = useWishlistStore();
+
+    const isInWishlist = computed(() => {
+      return wishlistStore.wishlistItems.some(item => item.id === props.product.id);
+    });
 
     const handleClick = () => {
       router.push({ name: 'ProductDetail', params: { id: props.product.id } });
@@ -103,6 +111,7 @@ export default {
       addToFavourites,
       addToCart,
       compareProduct,
+      isInWishlist,
     };
   },
 };

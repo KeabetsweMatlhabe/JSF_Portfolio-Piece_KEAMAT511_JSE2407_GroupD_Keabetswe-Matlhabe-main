@@ -1,12 +1,6 @@
 <template>
   <div>
-    <!-- <nav class="navbar">
-      <router-link to="/">Home</router-link>
-      <router-link to="/wishList">Wish List</router-link>
-      <router-link to="/cart">Cart</router-link>
-      <button @click="logout" v-if="loggedIn">Logout</button>
-      <router-link to="/login" v-else>Login</router-link>
-    </nav> -->
+   
     <div class="grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto justify-center">
       <FilterComponent @filter="handleFilter" @search="handleSearch" />
       <SortComponent @sort="handleSort" />
@@ -28,17 +22,19 @@ import FilterComponent from '@/components/FilterComponent.vue';
 import SortComponent from '@/components/SortComponent.vue';
 import ProductList from '@/components/ProductList.vue';
 import ErrorComponent from '@/components/ErrorComponent.vue';
+import { useWishlistStore } from '@/composables/useWishlistStore';
 
 export default {
   components: {
     FilterComponent,
     SortComponent,
     ProductList,
-    ErrorComponent
+    ErrorComponent,
+    useWishlistStore
   },
   setup() {
     const { products, loading, error, fetchProducts, filteredProducts, setFilterItem, setSearchTerm, setSorting } = useProductStore();
-
+    const wishlistStore = useWishlistStore();
     onMounted(async () => {
       await fetchProducts();
     });
@@ -73,7 +69,8 @@ export default {
       handleFilter,
       handleSearch,
       loggedIn,
-      logout
+      logout,
+      wishlistStore
     };
   },
 };
