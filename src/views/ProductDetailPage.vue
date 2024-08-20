@@ -1,9 +1,9 @@
 
 <template>
-  <div>
+  <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-4">
     <ProductDetail :product="product" v-if="product" />
-    <div v-else>Loading...</div>
-    <button @click="goBack" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <div v-else class="text-center py-8">Loading...</div>
+    <button @click="goBack" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
       Back to Products
     </button>
   </div>

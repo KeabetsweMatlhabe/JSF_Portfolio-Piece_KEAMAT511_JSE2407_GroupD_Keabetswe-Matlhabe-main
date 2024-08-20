@@ -1,59 +1,61 @@
 
 <!-- src/views/ComparisonPage.vue -->
 <template>
+  <div class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-4">
     <div v-if="cartStore.isLoggedIn">
       <h1 class="text-2xl font-bold mb-4">Product Comparison</h1>
       <div v-if="comparisonStore.comparisonList.length > 0">
-        <table class="w-full border-collapse border">
+        <table class="w-full border-collapse border border-gray-300 dark:border-gray-600">
           <thead>
-            <tr>
-              <th class="border p-2">Specification</th>
-              <th v-for="product in comparisonStore.comparisonList" :key="product.id" class="border p-2">
+            <tr class="bg-gray-100 dark:bg-gray-700">
+              <th class="border border-gray-300 dark:border-gray-600 p-2">Specification</th>
+              <th v-for="product in comparisonStore.comparisonList" :key="product.id" class="border border-gray-300 dark:border-gray-600 p-2">
                 {{ product.title }}
-                <button @click="comparisonStore.removeFromComparison(product.id)" class="ml-2 text-red-500">Remove</button>
+                <button @click="comparisonStore.removeFromComparison(product.id)" class="ml-2 text-red-500 hover:text-red-600">Remove</button>
               </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="border p-2">Image</td>
-              <td v-for="product in comparisonStore.comparisonList" :key="product.id" class="border p-2">
+              <td class="border border-gray-300 dark:border-gray-600 p-2">Image</td>
+              <td v-for="product in comparisonStore.comparisonList" :key="product.id" class="border border-gray-300 dark:border-gray-600 p-2">
                 <img :src="product.image" :alt="product.title" class="w-24 h-24 object-contain mx-auto" />
               </td>
             </tr>
             <tr>
-              <td class="border p-2">Description</td>
-              <td v-for="product in comparisonStore.comparisonList" :key="product.id" class="border p-2">
+              <td class="border border-gray-300 dark:border-gray-600 p-2">Description</td>
+              <td v-for="product in comparisonStore.comparisonList" :key="product.id" class="border border-gray-300 dark:border-gray-600 p-2">
                 {{ product.description }}
               </td>
             </tr>
             <tr>
-              <td class="border p-2">Price</td>
-              <td v-for="product in comparisonStore.comparisonList" :key="product.id" class="border p-2">
+              <td class="border border-gray-300 dark:border-gray-600 p-2">Price</td>
+              <td v-for="product in comparisonStore.comparisonList" :key="product.id" class="border border-gray-300 dark:border-gray-600 p-2">
                 ${{ product.price.toFixed(2) }}
               </td>
             </tr>
             <tr>
-              <td class="border p-2">Rating</td>
-              <td v-for="product in comparisonStore.comparisonList" :key="product.id" class="border p-2">
+              <td class="border border-gray-300 dark:border-gray-600 p-2">Rating</td>
+              <td v-for="product in comparisonStore.comparisonList" :key="product.id" class="border border-gray-300 dark:border-gray-600 p-2">
                 {{ product.rating }}
               </td>
             </tr>
           </tbody>
         </table>
-        <button @click="comparisonStore.clearComparisonList" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">
+        <button @click="comparisonStore.clearComparisonList" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
           Clear Comparison List
         </button>
       </div>
-      <div v-else>
+      <div v-else class="text-center py-8">
         <p>No products added to comparison list yet.</p>
       </div>
     </div>
-    <div v-else>
+    <div v-else class="text-center py-8">
       <p>Please log in to access the comparison list.</p>
-      <router-link to="/login" class="text-blue-500">Log In</router-link>
+      <router-link to="/login" class="text-blue-500 hover:text-blue-600">Log In</router-link>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   import { useCartStore } from '@/composables/useCartStore';
