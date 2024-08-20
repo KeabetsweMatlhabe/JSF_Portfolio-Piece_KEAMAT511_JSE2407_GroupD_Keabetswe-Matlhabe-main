@@ -7,11 +7,14 @@
       </router-link>
       <ul class="flex space-x-6 md:space-x-8">
         <li>
-          <router-link to="/wishlist" class="text-white dark:text-gray-200 hover:text-blue-400 transition duration-300 flex items-center">
+          <router-link to="/wishlist" class="text-white dark:text-gray-200 hover:text-blue-400 transition duration-300 flex items-center relative">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
             </svg>
             Wishlist
+            <span v-if="wishlistCount > 0" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+              {{ wishlistCount }}
+            </span>
           </router-link>
         </li>
         <li>
@@ -53,15 +56,20 @@
 
 <script>
 import { useCartStore } from '@/composables/useCartStore';
-import { useRouter } from 'vue-router';
+import { useWishlistStore } from '@/composables/useWishlistStore';
 import { useComparisonStore } from '@/composables/useComparisonStore';
+import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 
 export default {
   setup() {
     const cartStore = useCartStore();
+    const wishlistStore = useWishlistStore();
     const comparisonStore = useComparisonStore();
     const router = useRouter();
     
+    const wishlistCount = computed(() => wishlistStore.wishlistCount);
+
     const handleLogout = () => {
       cartStore.logout();
       comparisonStore.clearComparisonList();
@@ -71,6 +79,7 @@ export default {
     return {
       cartStore,
       comparisonStore,
+      wishlistCount,
       handleLogout,
     };
   },

@@ -27,6 +27,7 @@
     <div class="flex justify-between space-x-2 m-4">
       <button @click.stop="addToFavourites">
         <svg
+          :class="{'fill-red-500': isInWishlist}"
           class="me-1.5 h-5 w-5 hover:fill-red-500"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +54,6 @@
       <button @click.stop="compareProduct" class="inline-flex justify-center whitespace-nowrap rounded-lg bg-indigo-700 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-900 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors">
         Compare
       </button>
-      
     </div>
   </div>
 </template>
@@ -93,7 +93,11 @@ export default {
 
     const addToFavourites = (event) => {
       event.stopPropagation();
-      // Add to favorites logic
+      if (isInWishlist.value) {
+        wishlistStore.removeFromWishlist(props.product.id);
+      } else {
+        wishlistStore.addToWishlist(props.product);
+      }
     };
 
     const addToCart = (event) => {

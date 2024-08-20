@@ -1,68 +1,39 @@
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
 export const useWishlistStore = defineStore('wishlist', () => {
-  const wishlistItems = ref([]);
+  const wishlistItems = ref(JSON.parse(localStorage.getItem('wishlist')) || []);
 
   const wishlistCount = computed(() => wishlistItems.value.length);
 
-  async function fetchWishlist() {
+  watch(wishlistItems, (newItems) => {
+    localStorage.setItem('wishlist', JSON.stringify(newItems));
+  }, { deep: true });
+
+  function addToWishlist(product) {
+    if (!wishlistItems.value.some(item => item.id === product.id)) {
+      wishlistItems.value.push(product);
+    }
+  }
+
+  function removeFromWishlist(productId) {
+    wishlistItems.value = wishlistItems.value.filter(item => item.id !== productId);
+  }
+
+  function clearWishlist() {
+    wishlistItems.value = [];
+  }
+
+  async function syncWithAPI() {
     try {
       const response = await axios.get('/api/wishlist');
-      wishlistItems.value = response.data;
-      saveWishlistToLocalStorage();
+      const apiWishlist = response.data;
+      wishlistItems.value = [...new Set([...wishlistItems.value, ...apiWishlist])];
     } catch (error) {
-      console.error('Error fetching wishlist:', error);
+      console.error('Failed to sync wishlist with API', error);
     }
   }
-
-  async function addToWishlist(product) {
-    if (!wishlistItems.value.some(item => item.id === product.id)) {
-      try {
-        await axios.post('/api/wishlist', product);
-        wishlistItems.value.push(product);
-        saveWishlistToLocalStorage();
-      } catch (error) {
-        console.error('Error adding to wishlist:', error);
-      }
-    }
-  }
-
-  async function removeFromWishlist(productId) {
-    try {
-      await axios.delete(`/api/wishlist/${productId}`);
-      wishlistItems.value = wishlistItems.value.filter(item => item.id !== productId);
-      saveWishlistToLocalStorage();
-    } catch (error) {
-      console.error('Error removing from wishlist:', error);
-    }
-  }
-
-  async function clearWishlist() {
-    try {
-      await axios.delete('/api/wishlist');
-      wishlistItems.value = [];
-      saveWishlistToLocalStorage();
-    } catch (error) {
-      console.error('Error clearing wishlist:', error);
-    }
-  }
-
-  function saveWishlistToLocalStorage() {
-    localStorage.setItem('wishlist', JSON.stringify(wishlistItems.value));
-  }
-
-  function loadWishlistFromLocalStorage() {
-    const storedWishlist = localStorage.getItem('wishlist');
-    if (storedWishlist) {
-      wishlistItems.value = JSON.parse(storedWishlist);
-    }
-  }
-
-  // Load wishlist from local storage and fetch from API on store creation
-  loadWishlistFromLocalStorage();
-  fetchWishlist();
 
   return {
     wishlistItems,
@@ -70,7 +41,7 @@ export const useWishlistStore = defineStore('wishlist', () => {
     addToWishlist,
     removeFromWishlist,
     clearWishlist,
-    fetchWishlist,
+    syncWithAPI
   };
 });
 
