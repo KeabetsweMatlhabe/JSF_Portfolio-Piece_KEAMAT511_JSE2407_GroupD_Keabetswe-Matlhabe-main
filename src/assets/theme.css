@@ -1,0 +1,14 @@
+.dark {
+    --bg-primary: #1a202c;
+    --text-primary: #f7fafc;
+  }
+  
+  .light {
+    --bg-primary: #f7fafc;
+    --text-primary: #1a202c;
+  }
+  
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
