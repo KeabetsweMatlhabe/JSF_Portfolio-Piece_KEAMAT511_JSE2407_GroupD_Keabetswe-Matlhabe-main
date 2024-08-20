@@ -1,20 +1,15 @@
 <template>
-  <div id="app" :class="{ 'dark': theme === 'dark' }">
-    <!-- Theme toggle button -->
-    <button @click="toggleTheme" class="theme-toggle">
-      {{ theme === 'light' ? '🌙' : '☀️' }}
-    </button>
-    
-    <!-- The Navbar will persist across all pages -->
+  <div id="app" :class="{ 'dark': isDarkMode }">
     <Navbar />
-    
-    <!-- The router-view will display the component corresponding to the current route -->
+    <button @click="toggleTheme" class="theme-toggle">
+      {{ isDarkMode ? '☀️' : '🌙' }}
+    </button>
     <router-view />
   </div>
 </template>
 
 <script>
-import { useThemeStore } from '@/composables/useThemeStore';
+import { ref, onMounted, provide } from 'vue';
 import Navbar from './components/Navbar.vue';
 
 export default {
@@ -22,10 +17,31 @@ export default {
     Navbar,
   },
   setup() {
-    const { theme, toggleTheme } = useThemeStore();
+    const isDarkMode = ref(false);
 
-    return { theme, toggleTheme };
-  }
+    const toggleTheme = () => {
+      isDarkMode.value = !isDarkMode.value;
+      localStorage.setItem('darkMode', isDarkMode.value);
+      applyTheme();
+    };
+
+    const applyTheme = () => {
+      document.documentElement.classList.toggle('dark', isDarkMode.value);
+    };
+
+    onMounted(() => {
+      isDarkMode.value = localStorage.getItem('darkMode') === 'true';
+      applyTheme();
+    });
+
+    provide('isDarkMode', isDarkMode);
+    provide('toggleTheme', toggleTheme);
+
+    return {
+      isDarkMode,
+      toggleTheme,
+    };
+  },
 };
 </script>
 
@@ -40,7 +56,4 @@ export default {
   border: none;
   cursor: pointer;
 }
-
-/* Import or include your theme styles here */
-@import '@/assets/theme.css';
 </style>

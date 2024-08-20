@@ -1,5 +1,5 @@
 <template>
-  <div class="grid justify-center">
+  <div class="grid justify-center bg-white dark:bg-gray-800">
     <div class="max-w-7xl w-full mx-auto grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 my-4">
       <ProductCard
         v-for="product in products"

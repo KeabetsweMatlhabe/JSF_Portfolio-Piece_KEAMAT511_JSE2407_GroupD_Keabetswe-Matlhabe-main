@@ -11,7 +11,7 @@ const routes = [
   { 
     path: '/', 
     component: HomePage, 
-    meta: { requiresAuth: true }, 
+    meta: { requiresAuth: true, theme: 'light' }, 
     name: 'Home',
     props: true // This allows passing props to the component
   },

@@ -1,6 +1,5 @@
 <template>
-  <div>
-   
+  <div class="bg-white dark:bg-gray-800 text-black dark:text-white">
     <div class="grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto justify-center">
       <FilterComponent @filter="handleFilter" @search="handleSearch" />
       <SortComponent @sort="handleSort" />
@@ -16,7 +15,7 @@
 </template>
 
 <script>
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, inject } from 'vue';
 import { useProductStore } from '@/composables/useProducts';
 import FilterComponent from '@/components/FilterComponent.vue';
 import SortComponent from '@/components/SortComponent.vue';
@@ -30,11 +29,12 @@ export default {
     SortComponent,
     ProductList,
     ErrorComponent,
-    useWishlistStore
   },
   setup() {
     const { products, loading, error, fetchProducts, filteredProducts, setFilterItem, setSearchTerm, setSorting } = useProductStore();
     const wishlistStore = useWishlistStore();
+    const isDarkMode = inject('isDarkMode');
+
     onMounted(async () => {
       await fetchProducts();
     });
@@ -70,12 +70,12 @@ export default {
       handleSearch,
       loggedIn,
       logout,
-      wishlistStore
+      wishlistStore,
+      isDarkMode,
     };
   },
 };
 </script>
-
 <style>
 /* Add styles for the login form */
 .login-container {
