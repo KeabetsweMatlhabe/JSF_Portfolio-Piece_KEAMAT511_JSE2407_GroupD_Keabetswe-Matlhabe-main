@@ -1,40 +1,63 @@
 <template>
-  <div>
-    <nav class="bg-gray-500 border-gray-200">
-     
-    </nav>
-    <div class="login-container">
-      <h1>Login</h1>
-      <form @submit.prevent="handleLogin">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" v-model="username" required placeholder="Enter your username" />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <div class="password-input">
-            <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password" required placeholder="Enter your password" />
-            <button type="button" @click="togglePasswordVisibility">{{ showPassword ? 'Hide' : 'Show' }}</button>
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+        Sign in to your account
+      </h2>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <form @submit.prevent="handleLogin" class="space-y-6">
+          <div>
+            <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Username
+            </label>
+            <div class="mt-1">
+              <input id="username" name="username" type="text" required v-model="username"
+                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Enter your username" />
+            </div>
           </div>
-        </div>
-        <button type="submit" :disabled="loading">Login</button>
-        <p v-if="loading" class="loading-message">Logging in, please wait...</p>
-        <p v-if="error" class="error-message">{{ error }}</p>
-      </form>
+
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Password
+            </label>
+            <div class="mt-1 relative">
+              <input :type="showPassword ? 'text' : 'password'" id="password" name="password" required v-model="password"
+                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Enter your password" />
+              <button type="button" @click="togglePasswordVisibility"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                {{ showPassword ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <button type="submit" :disabled="loading"
+              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50">
+              {{ loading ? 'Signing in...' : 'Sign in' }}
+            </button>
+          </div>
+        </form>
+
+        <p v-if="error" class="mt-2 text-center text-sm text-red-600">{{ error }}</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 export default {
   name: "Login",
   setup() {
     const router = useRouter();
-    const isNavbarOpen = ref(false);
     const username = ref('');
     const password = ref('');
     const showPassword = ref(false);
@@ -46,23 +69,13 @@ export default {
     });
 
     onMounted(() => {
-      // Redirect to login if not authenticated and trying to access any route other than login
-      if (!isAuthenticated.value && router.currentRoute.value.path !== '/login') {
-        router.push('/login');
+      if (isAuthenticated.value && router.currentRoute.value.path === '/login') {
+        router.push('/');
       }
     });
 
-    const toggleNavbar = () => {
-      isNavbarOpen.value = !isNavbarOpen.value;
-    };
-
     const togglePasswordVisibility = () => {
       showPassword.value = !showPassword.value;
-    };
-
-    const logout = () => {
-      localStorage.removeItem('jwt');
-      router.push('/login');
     };
 
     const handleLogin = async () => {
@@ -96,23 +109,25 @@ export default {
       }
     };
 
+    // Watch for changes in authentication status
+    watch(isAuthenticated, (newValue) => {
+      if (!newValue) {
+        router.push('/login');
+      }
+    });
+
     return {
-      isNavbarOpen,
-      isAuthenticated,
       username,
       password,
       showPassword,
       loading,
       error,
-      toggleNavbar,
       togglePasswordVisibility,
-      logout,
       handleLogin
     };
   },
 };
 </script>
-
 <style>
 /* Navbar styles */
 .bg-gray-500 {

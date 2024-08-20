@@ -1,5 +1,3 @@
-
-
 import { defineStore } from 'pinia';
 
 export const useComparisonStore = defineStore('comparison', {
@@ -9,7 +7,12 @@ export const useComparisonStore = defineStore('comparison', {
   actions: {
     addToComparison(product) {
       if (this.comparisonList.length < 5) {
-        this.comparisonList.push(product);
+        // Check if the product is already in the list
+        if (!this.comparisonList.some(p => p.id === product.id)) {
+          this.comparisonList.push(product);
+        } else {
+          alert('This product is already in the comparison list.');
+        }
       } else {
         alert('You can only compare up to 5 products.');
       }
@@ -25,3 +28,4 @@ export const useComparisonStore = defineStore('comparison', {
     comparisonCount: (state) => state.comparisonList.length,
   },
 });
+
