@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import axios from 'axios'; 
+import axios from 'axios';
 
 export const useWishlistStore = defineStore('wishlist', () => {
   const wishlistItems = ref([]);
@@ -60,9 +60,9 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Call this function when the store is created
+  // Load wishlist from local storage and fetch from API on store creation
   loadWishlistFromLocalStorage();
-  fetchWishlist(); // Fetch from API when the store is created
+  fetchWishlist();
 
   return {
     wishlistItems,
@@ -73,3 +73,4 @@ export const useWishlistStore = defineStore('wishlist', () => {
     fetchWishlist,
   };
 });
+

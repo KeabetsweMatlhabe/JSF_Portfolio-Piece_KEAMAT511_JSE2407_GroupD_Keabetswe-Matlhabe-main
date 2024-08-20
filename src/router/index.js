@@ -4,7 +4,7 @@ import HomePage from '../views/HomePage.vue';
 import CartPage from '../views/CartPage.vue';
 import LoginPage from '../views/LoginPage.vue';
 import ProductDetailPage from '../views/ProductDetailPage.vue';
-import WishList from '../views/WishList.vue';
+import WishList from '../components/WishListPage.vue';
 import ComparisonPage from '../views/ComparisonPage.vue';
 
 const routes = [
