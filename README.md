@@ -59,4 +59,7 @@ Actions:
 - npm install
 - npm run dev
 - Open your browser and go to http://localhost:5174/.
+
+## License
+This project is licensed under the MIT License.
   
