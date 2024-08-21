@@ -1,10 +1,13 @@
 <template>
-  <div id="app" :class="{ 'dark': isDarkMode }">
+  
+  <div :class="{ 'dark': isDarkMode }">
+    <div id="app" >
     <Navbar />
     <button @click="toggleTheme" class="theme-toggle">
       {{ isDarkMode ? '☀️' : '🌙' }}
     </button>
     <router-view />
+  </div>
   </div>
 </template>
 

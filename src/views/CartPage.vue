@@ -9,7 +9,7 @@
               <img :src="item.image" alt="Product Image" class="item-image" />
               <div class="item-info">
                 <span class="item-name">{{ item.title }}</span>
-                <span class="item-price">${{ item.price.toFixed(2) }}</span>
+                <span class="item-price">${{parseFloat (item.price).toFixed(2) }}</span>
               </div>
             </div>
             <div class="item-actions">
@@ -58,6 +58,7 @@ export default defineComponent({
 });
 </script>
 
+<style scoped></style>
 <style scoped>
 /* The existing styles remain unchanged */
 </style>

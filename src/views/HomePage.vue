@@ -1,19 +1,6 @@
 <template>
-  <div class="bg-white dark:bg-gray-800 text-black dark:text-white">
-    <div class="grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto justify-center">
-      <FilterComponent @filter="handleFilter" @search="handleSearch" />
-      <SortComponent @sort="handleSort" />
-    </div>
-    <div v-if="loading">
-      <p>Loading products...</p>
-    </div>
-    <div v-if="error">
-      <ErrorComponent :error="error" />
-    </div>
-    <ProductList v-else :products="filteredProducts" />
-
-    <!-- Wishlist Carousel -->
-    <div v-if="wishlistStore.wishlistCount > 0" class="mt-8">
+  <!-- Wishlist Carousel -->
+  <div v-if="wishlistStore.wishlistCount > 0" class="mt-8">
       <h2 class="text-2xl font-bold mb-4">Your Wishlist</h2>
       <div class="flex overflow-x-auto space-x-4 pb-4">
         <div v-for="item in wishlistStore.wishlistItems" :key="item.id" class="flex-none w-64">
@@ -28,6 +15,20 @@
         </div>
       </div>
     </div>
+  <div class="bg-white dark:bg-gray-800 text-black dark:text-white">
+    <div class="grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto justify-center">
+      <FilterComponent @filter="handleFilter" @search="handleSearch" />
+      <SortComponent @sort="handleSort" />
+    </div>
+    <div v-if="loading">
+      <p>Loading products...</p>
+    </div>
+    <div v-if="error">
+      <ErrorComponent :error="error" />
+    </div>
+    <ProductList v-else :products="filteredProducts" />
+
+    
   </div>
 </template>
 
