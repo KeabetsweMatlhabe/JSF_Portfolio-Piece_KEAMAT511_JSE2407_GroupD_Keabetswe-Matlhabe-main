@@ -3,14 +3,18 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 
 export const useWishlistStore = defineStore('wishlist', () => {
+  // State
   const wishlistItems = ref(JSON.parse(localStorage.getItem('wishlist')) || []);
 
+  // Computed Properties
   const wishlistCount = computed(() => wishlistItems.value.length);
 
+  // Watcher to persist the wishlist to localStorage
   watch(wishlistItems, (newItems) => {
     localStorage.setItem('wishlist', JSON.stringify(newItems));
   }, { deep: true });
 
+  // Actions
   function addToWishlist(product) {
     if (!wishlistItems.value.some(item => item.id === product.id)) {
       wishlistItems.value.push(product);
@@ -35,6 +39,7 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
+  // Return the state, getters, and actions for use in components
   return {
     wishlistItems,
     wishlistCount,
@@ -44,4 +49,3 @@ export const useWishlistStore = defineStore('wishlist', () => {
     syncWithAPI
   };
 });
-

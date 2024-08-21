@@ -14,7 +14,7 @@
           <label for="filter" class="mr-2">Filter:</label>
           <input id="filter" v-model="filterText" @input="filterWishlist" class="p-2 border rounded" placeholder="Enter keyword">
         </div>
-        <button @click="wishlistStore.clearWishlist" class="bg-red-500 text-white px-4 py-2 rounded">
+        <button @click="clearWishlist" class="bg-red-500 text-white px-4 py-2 rounded">
           Clear Wishlist
         </button>
       </div>
@@ -27,7 +27,7 @@
             <button @click="addToCart(item)" class="bg-blue-500 text-white px-4 py-2 rounded">
               Add to Cart
             </button>
-            <button @click="wishlistStore.removeFromWishlist(item.id)" class="bg-red-500 text-white px-4 py-2 rounded">
+            <button @click="removeFromWishlist(item.id)" class="bg-red-500 text-white px-4 py-2 rounded">
               Remove
             </button>
           </div>
@@ -60,18 +60,16 @@ export default {
     const filteredAndSortedWishlistItems = computed(() => {
       let items = wishlistStore.wishlistItems;
 
-      // Filter
       if (filterText.value) {
         items = items.filter(item => 
-          item.title.toLowerCase().includes(filterText.value.toLowerCase()) ||
-          item.category.toLowerCase().includes(filterText.value.toLowerCase())
+          (item.title && item.title.toLowerCase().includes(filterText.value.toLowerCase())) ||
+          (item.category && item.category.toLowerCase().includes(filterText.value.toLowerCase()))
         );
       }
 
-      // Sort
       return items.sort((a, b) => {
         if (sortBy.value === 'name') {
-          return a.title.localeCompare(b.title);
+          return (a.title || '').localeCompare(b.title || '');
         } else if (sortBy.value === 'price') {
           return a.price - b.price;
         }
@@ -88,12 +86,13 @@ export default {
       router.push({ name: 'ProductDetail', params: { id: item.id } });
     }
 
-    function sortWishlist() {
-      // The sorting is handled by the computed property
+    function clearWishlist() {
+      wishlistStore.clearWishlist();
+      cartStore.clearCart(); // Clear the cart when clearing the wishlist
     }
 
-    function filterWishlist() {
-      // The filtering is handled by the computed property
+    function removeFromWishlist(id) {
+      wishlistStore.removeFromWishlist(id);
     }
 
     return {
@@ -103,9 +102,27 @@ export default {
       viewDetails,
       sortBy,
       filterText,
-      sortWishlist,
-      filterWishlist,
+      sortWishlist: () => {}, // Handled by computed property
+      filterWishlist: () => {}, // Handled by computed property
+      clearWishlist,
+      removeFromWishlist,
     };
   },
 };
 </script>
+
+<style scoped>
+/* Dark mode and other styling */
+.container {
+  @apply bg-white dark:bg-gray-800 dark:text-white;
+}
+button {
+  @apply dark:bg-gray-700 dark:text-white;
+}
+select, input {
+  @apply dark:bg-gray-700 dark:text-white;
+}
+.border {
+  @apply dark:border-gray-700;
+}
+</style>

@@ -1,5 +1,5 @@
 
-<template>
+<!-- <template>
   <div class="container mx-auto mt-8">
     <h1 class="text-3xl font-bold mb-4">My Wishlist</h1>
     <div v-if="wishlistStore.wishlistCount > 0">
@@ -87,4 +87,4 @@ export default {
     };
   },
 };
-</script>
+</script> -->
