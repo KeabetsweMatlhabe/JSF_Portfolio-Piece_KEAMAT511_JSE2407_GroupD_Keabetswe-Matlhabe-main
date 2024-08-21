@@ -11,6 +11,23 @@
       <ErrorComponent :error="error" />
     </div>
     <ProductList v-else :products="filteredProducts" />
+
+    <!-- Wishlist Carousel -->
+    <div v-if="wishlistStore.wishlistCount > 0" class="mt-8">
+      <h2 class="text-2xl font-bold mb-4">Your Wishlist</h2>
+      <div class="flex overflow-x-auto space-x-4 pb-4">
+        <div v-for="item in wishlistStore.wishlistItems" :key="item.id" class="flex-none w-64">
+          <div class="border p-4 rounded">
+            <img :src="item.image" :alt="item.title" class="w-full h-40 object-contain mb-2">
+            <h3 class="text-lg font-semibold truncate">{{ item.title }}</h3>
+            <p class="text-gray-600">${{ item.price }}</p>
+            <button @click="viewDetails(item)" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded w-full">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -22,6 +39,7 @@ import SortComponent from '@/components/SortComponent.vue';
 import ProductList from '@/components/ProductList.vue';
 import ErrorComponent from '@/components/ErrorComponent.vue';
 import { useWishlistStore } from '@/composables/useWishlistStore';
+import { useRouter } from 'vue-router';
 
 export default {
   components: {
@@ -34,6 +52,7 @@ export default {
     const { products, loading, error, fetchProducts, filteredProducts, setFilterItem, setSearchTerm, setSorting } = useProductStore();
     const wishlistStore = useWishlistStore();
     const isDarkMode = inject('isDarkMode');
+    const router = useRouter();
 
     onMounted(async () => {
       await fetchProducts();
@@ -57,8 +76,12 @@ export default {
 
     const logout = () => {
       localStorage.removeItem('jwt');
-      this.$router.push('/login');
+      router.push('/login');
     };
+
+    function viewDetails(item) {
+      router.push({ name: 'ProductDetail', params: { id: item.id } });
+    }
 
     return {
       products,
@@ -72,12 +95,13 @@ export default {
       logout,
       wishlistStore,
       isDarkMode,
+      viewDetails,
     };
   },
 };
 </script>
 <style>
-/* Add styles for the login form */
+
 .login-container {
   max-width: 400px;
   margin: 0 auto;
