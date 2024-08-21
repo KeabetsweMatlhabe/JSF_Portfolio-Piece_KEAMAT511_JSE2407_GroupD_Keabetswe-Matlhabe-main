@@ -53,6 +53,10 @@ Actions:
 ## Hosted Application
 - https://swiftcart-store-chi.vercel.app/login
 
+## video Link
+- https://youtu.be/lQxqxyn7P7c
+- 
+
 
 ### Getting Started
 
